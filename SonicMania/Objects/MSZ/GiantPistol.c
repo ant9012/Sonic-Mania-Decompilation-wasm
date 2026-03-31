@@ -9,6 +9,10 @@
 
 ObjectGiantPistol *GiantPistol;
 
+#if MANIA_USE_PLUS
+static bool32 GiantPistol_isEncoreMode = false;
+#endif
+
 void GiantPistol_Update(void)
 {
     RSDK_THIS(GiantPistol);
@@ -71,6 +75,10 @@ void GiantPistol_Create(void *data)
 void GiantPistol_StageLoad(void)
 {
     GiantPistol->aniFrames = RSDK.LoadSpriteAnimation("MSZ/Pistol.bin", SCOPE_STAGE);
+
+#if MANIA_USE_PLUS
+    GiantPistol_isEncoreMode = (SceneInfo->filter & FILTER_ENCORE) != 0;
+#endif
 
     GiantPistol->hitboxFront.left   = -80;
     GiantPistol->hitboxFront.top    = -58;
@@ -243,7 +251,7 @@ void GiantPistol_State_Aiming(void)
 #endif
         if (self->angle == 0x76 && self->activePlayers > 0) {
 #if MANIA_USE_PLUS
-            if (SceneInfo->filter & FILTER_ENCORE) {
+            if (GiantPistol_isEncoreMode) {
                 MSZSetup_ReloadBGParallax();
                 MSZSetup_ReloadBGParallax_Multiply(0x000);
             }
@@ -287,7 +295,7 @@ void GiantPistol_State_Aiming(void)
                 }
 
 #if MANIA_USE_PLUS
-                if (SceneInfo->filter == (FILTER_BOTH | FILTER_ENCORE) && GiantPistol->inCutscene) {
+                if (GiantPistol_isEncoreMode && GiantPistol->inCutscene) {
                     player->velocity.x += 0x18000;
                     player->state           = GiantPistol_PlayerState_PistolAir;
                     player->nextGroundState = GiantPistol_PlayerState_PistolGround;

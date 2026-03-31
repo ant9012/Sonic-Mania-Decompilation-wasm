@@ -9,6 +9,10 @@
 
 ObjectMSZSetup *MSZSetup;
 
+#if MANIA_USE_PLUS
+static bool32 MSZSetup_isEncoreMode = false;
+#endif
+
 void MSZSetup_Update(void)
 {
     RSDK_THIS(MSZSetup);
@@ -94,7 +98,7 @@ void MSZSetup_Create(void *data)
 
     if (MSZSetup->usingRegularPalette) {
 #if MANIA_USE_PLUS
-        if (SceneInfo->filter & FILTER_ENCORE) {
+        if (MSZSetup_isEncoreMode) {
             RSDK.LoadPalette(0, "EncoreMSZ2.act", 0b0000000011111111);
             self->state = MSZSetup_State_CheckTrainStart;
         }
@@ -112,7 +116,7 @@ void MSZSetup_Create(void *data)
 #endif
     }
 #if MANIA_USE_PLUS
-    else if (SceneInfo->filter & FILTER_ENCORE) {
+    else if (MSZSetup_isEncoreMode) {
         RSDK.LoadPalette(0, "EncoreMSZ1.act", 0b0000000011111111);
         RSDK.CopyPalette(0, 128, 3, 128, 80);
         RSDK.LoadPalette(4, "EncoreMSZ2.act", 0b0000000011111111);
@@ -131,6 +135,14 @@ void MSZSetup_StageLoad(void)
     MSZSetup->aniTiles    = RSDK.LoadSpriteSheet("MSZ/AniTiles.gif", SCOPE_STAGE);
     MSZSetup->background1 = RSDK.GetTileLayer(0);
 
+#if MANIA_USE_PLUS
+    MSZSetup_isEncoreMode = (SceneInfo->filter & FILTER_ENCORE) != 0;
+    LogHelpers_Print("MSZSetup_StageLoad: CACHED isEncoreMode = %d (filter = 0x%X)", 
+        MSZSetup_isEncoreMode, SceneInfo->filter);
+#else
+    LogHelpers_Print("MSZSetup_StageLoad: MANIA_USE_PLUS is NOT defined!");
+#endif
+
     if (RSDK.CheckSceneFolder("MSZCutscene")) {
         RSDK.CopyPalette(0, 204, 4, 204, 4);
         RSDK.CopyPalette(3, 128, 0, 128, 128);
@@ -148,7 +160,7 @@ void MSZSetup_StageLoad(void)
             MSZSetup->usingRegularPalette = true;
             RSDK.CopyPalette(4, 128, 0, 128, 128);
 #if MANIA_USE_PLUS
-            if (SceneInfo->filter & FILTER_ENCORE) {
+            if (MSZSetup_isEncoreMode) {
                 RSDK.CopyPalette(0, 128, 5, 128, 128);
                 RSDK.LoadPalette(0, "EncoreMSZ2.act", 0b0000000011111111);
                 RSDK.CopyPalette(0, 128, 1, 128, 128);
@@ -163,7 +175,7 @@ void MSZSetup_StageLoad(void)
 #endif
 
 #if MANIA_USE_PLUS
-            if (!(SceneInfo->filter & FILTER_ENCORE) && GET_CHARACTER_ID(1) == ID_KNUCKLES) {
+            if (!MSZSetup_isEncoreMode && GET_CHARACTER_ID(1) == ID_KNUCKLES) {
 #else
             if (GET_CHARACTER_ID(1) == ID_KNUCKLES) {
 #endif
@@ -211,7 +223,7 @@ void MSZSetup_StageLoad(void)
         }
         else {
 #if MANIA_USE_PLUS
-            if ((SceneInfo->filter & FILTER_ENCORE)) {
+            if (MSZSetup_isEncoreMode) {
                 RSDK.ResetEntitySlot(32, MSZSetup->classID, MSZSetup_State_ManageFade_E);
 
                 if (isMainGameMode()) {
@@ -303,7 +315,7 @@ void MSZSetup_StoreBGParallax(void)
     for (int32 i = 0; i < background1->scrollInfoCount; ++i) {
         MSZSetup->storedParallax[id++] = background1->scrollInfo[i].parallaxFactor;
 #if MANIA_USE_PLUS
-        if (SceneInfo->filter == (FILTER_BOTH | FILTER_MANIA))
+        if (!MSZSetup_isEncoreMode)
 #endif
             background1->scrollInfo[i].parallaxFactor = 0;
     }
@@ -312,7 +324,7 @@ void MSZSetup_StoreBGParallax(void)
     for (int32 i = 0; i < background2->scrollInfoCount; ++i) {
         MSZSetup->storedParallax[id++] = background2->scrollInfo[i].parallaxFactor;
 #if MANIA_USE_PLUS
-        if (SceneInfo->filter == (FILTER_BOTH | FILTER_MANIA))
+        if (!MSZSetup_isEncoreMode)
 #endif
             background2->scrollInfo[i].parallaxFactor = 0;
     }
@@ -321,7 +333,7 @@ void MSZSetup_StoreBGParallax(void)
     {
         MSZSetup->storedParallax[id++] = (parallaxSprite->parallaxFactor.x >> 8);
 #if MANIA_USE_PLUS
-        if (SceneInfo->filter == (FILTER_BOTH | FILTER_MANIA))
+        if (!MSZSetup_isEncoreMode)
 #endif
             parallaxSprite->parallaxFactor.x = 0;
     }
@@ -354,7 +366,7 @@ void MSZSetup_ReloadBGParallax_Multiply(int32 parallaxMultiplier)
     {
         parallaxSprite->scrollSpeed.x = parallaxMultiplier * MSZSetup->storedParallax[id++];
 #if MANIA_USE_PLUS
-        if (!(SceneInfo->filter & FILTER_ENCORE))
+        if (!MSZSetup_isEncoreMode)
 #endif
             parallaxSprite->scrollSpeed.x >>= 8;
     }
@@ -431,7 +443,7 @@ void MSZSetup_State_SwitchPalettes(void)
 
     if (self->timer >= 256) {
 #if MANIA_USE_PLUS
-        if (!(SceneInfo->filter & FILTER_ENCORE)) {
+        if (!MSZSetup_isEncoreMode) {
 #endif
             for (int32 i = 0; i < 0x400; ++i) MSZSetup->background1->deformationData[i] = MSZSetup->deformData[i & 0x1F];
 #if MANIA_USE_PLUS
@@ -445,11 +457,19 @@ void MSZSetup_State_SwitchPalettes(void)
         RSDK.CopyPalette(4, 128, 2, 128, 128);
         RSDK.RotatePalette(2, 204, 207, false);
 
-        if ((SceneInfo->filter & FILTER_ENCORE))
+        LogHelpers_Print("MSZSetup SwitchPalettes: isEncoreMode = %d", MSZSetup_isEncoreMode);
+
+        if (MSZSetup_isEncoreMode) {
+            LogHelpers_Print("MSZSetup: SwitchPalettes -> CheckTrainStart SUCCESS");
             self->state = MSZSetup_State_CheckTrainStart;
-        else
+        }
+        else {
+            LogHelpers_Print("MSZSetup: SwitchPalettes -> DESTROYING (not encore)");
 #endif
             destroyEntity(self);
+#if MANIA_USE_PLUS
+        }
+#endif
     }
 }
 
@@ -546,11 +566,17 @@ void MSZSetup_State_Boss_MSZ1E(void)
     fgSupaLow->scrollInfo[1].scrollPos &= 0x00FFFFFF;
     fgSupaLow->scrollInfo[1].scrollSpeed = 0x600 * MSZSetup->chuggaVolume;
 
+    if (!(Zone->timer & 0x3F)) {
+        LogHelpers_Print("MSZSetup: State 7 - Boss_MSZ1E | parallaxMult = %d, chuggaVolume = %d",
+            MSZSetup->parallaxMult, MSZSetup->chuggaVolume);
+    }
+
     if (!MSZSetup->parallaxMult) {
         MSZSetup->chuggaVolume -= 4;
         RSDK.SetChannelAttributes(MSZSetup->chuggaChannel, MSZSetup->chuggaVolume * (1 / 256.0f), 0.0, 1.0);
 
         if (MSZSetup->chuggaVolume <= 0) {
+            LogHelpers_Print("MSZSetup: State 7 -> State 8 (AwaitActClearStart)");
             fgSupaLow->scrollInfo[1].scrollSpeed = 0;
             fgSupaLow->scrollInfo[1].scrollPos   = 0;
             MSZSetup->chuggaVolume               = 0;
@@ -563,15 +589,28 @@ void MSZSetup_State_AwaitActClearStart(void)
 {
     RSDK_THIS(MSZSetup);
 
-    if (RSDK_GET_ENTITY(SLOT_ACTCLEAR, ActClear)->classID == ActClear->classID)
+    if (!(Zone->timer & 0x3F)) {
+        LogHelpers_Print("MSZSetup: State 8 - AwaitActClearStart | slot classID = %d, ActClear classID = %d",
+            RSDK_GET_ENTITY(SLOT_ACTCLEAR, ActClear)->classID, ActClear->classID);
+    }
+
+    if (RSDK_GET_ENTITY(SLOT_ACTCLEAR, ActClear)->classID == ActClear->classID) {
+        LogHelpers_Print("MSZSetup: State 8 -> State 9 (AwaitActClearFinish)");
         self->state = MSZSetup_State_AwaitActClearFinish;
+    }
 }
 
 void MSZSetup_State_AwaitActClearFinish(void)
 {
     RSDK_THIS(MSZSetup);
 
+    if (!(Zone->timer & 0x3F)) {
+        LogHelpers_Print("MSZSetup: State 9 - AwaitActClearFinish | classID = %d (waiting for != %d)",
+            RSDK_GET_ENTITY(SLOT_ACTCLEAR, ActClear)->classID, ActClear->classID);
+    }
+
     if (RSDK_GET_ENTITY(SLOT_ACTCLEAR, ActClear)->classID != ActClear->classID) {
+        LogHelpers_Print("MSZSetup: State 9 -> State 10 (MoveToMSZ2Start)");
         self->timer                 = 0;
         Zone->cameraBoundsR[0]      = 17064;
         Zone->playerBoundActiveR[0] = false;
@@ -600,7 +639,13 @@ void MSZSetup_State_MoveToMSZ2Start(void)
     RSDK_THIS(MSZSetup);
 
     EntityPlayer *player1 = RSDK_GET_ENTITY(SLOT_PLAYER1, Player);
-    player1->right        = true;
+
+    if (!(Zone->timer & 0x3F)) {
+        LogHelpers_Print("MSZSetup: State 10 - MoveToMSZ2Start | player1.x = 0x%X, target = 0x%X",
+            player1->position.x, (Zone->cameraBoundsR[0] - ScreenInfo->center.x) << 16);
+    }
+
+    player1->right = true;
 
     if (player1->position.x < (Zone->cameraBoundsR[0] - ScreenInfo->center.x) << 16) {
         foreach_active(Player, player)
@@ -610,6 +655,7 @@ void MSZSetup_State_MoveToMSZ2Start(void)
         }
     }
     else {
+        LogHelpers_Print("MSZSetup: State 10 -> State 11 (AwaitPlayerStopped)");
         player1->right = false;
         player1->left  = true;
         self->state    = MSZSetup_State_AwaitPlayerStopped;
@@ -621,7 +667,13 @@ void MSZSetup_State_AwaitPlayerStopped(void)
     RSDK_THIS(MSZSetup);
 
     EntityPlayer *player1 = RSDK_GET_ENTITY(SLOT_PLAYER1, Player);
+
+    if (!(Zone->timer & 0x3F)) {
+        LogHelpers_Print("MSZSetup: State 11 - AwaitPlayerStopped | groundVel = %d", player1->groundVel);
+    }
+
     if (player1->groundVel <= 0) {
+        LogHelpers_Print("MSZSetup: State 11 -> State 12 (StoreMSZ1ScrollPos_E)");
         player1->groundVel = 0;
         player1->left      = false;
         player1->direction = FLIP_NONE;
@@ -637,7 +689,13 @@ void MSZSetup_State_StoreMSZ1ScrollPos_E(void)
     EntityPlayer *player1 = RSDK_GET_ENTITY(SLOT_PLAYER1, Player);
     player1->direction    = FLIP_NONE;
 
+    if (!(Zone->timer & 0xF)) {
+        LogHelpers_Print("MSZSetup: State 12 - StoreMSZ1ScrollPos_E | timer = %d / 90", self->timer);
+    }
+
     if (++self->timer >= 90) {
+        LogHelpers_Print("MSZSetup: State 12 - TRANSITIONING TO ACT 2");
+
         int32 id = 0;
 
         TileLayer *background1 = RSDK.GetTileLayer(0);
@@ -655,6 +713,8 @@ void MSZSetup_State_StoreMSZ1ScrollPos_E(void)
             globals->parallaxOffset[id++] =
                 ((sprite->scrollPos.x + sprite->parallaxFactor.x * ScreenInfo->position.x) & 0x7FFF0000) % sprite->loopPoint.x;
         }
+
+        LogHelpers_Print("MSZSetup: State 12 - Stored %d parallax offsets, calling Zone_StoreEntities + LoadScene", id);
 
         Zone_StoreEntities((ScreenInfo->center.x + 16640) << 16, 1440 << 16);
         globals->atlEnabled = true;

@@ -9,6 +9,10 @@
 
 ObjectDBTower *DBTower;
 
+#if MANIA_USE_PLUS
+static bool32 DBTower_isEncoreMode = false;
+#endif
+
 void DBTower_Update(void)
 {
     RSDK_THIS(DBTower);
@@ -103,6 +107,10 @@ void DBTower_Create(void *data)
 void DBTower_StageLoad(void)
 {
     DBTower->aniFrames = RSDK.LoadSpriteAnimation("MSZ/Sandworm.bin", SCOPE_STAGE);
+
+#if MANIA_USE_PLUS
+    DBTower_isEncoreMode = (SceneInfo->filter & FILTER_ENCORE) != 0;
+#endif
 
     DBTower->hitboxSegment.left   = -27;
     DBTower->hitboxSegment.top    = -27;
@@ -231,7 +239,7 @@ void DBTower_State_SetupArena(void)
         Music_TransitionTrack(TRACK_MINIBOSS, 0.0125);
 
 #if MANIA_USE_PLUS
-        if (SceneInfo->filter == (FILTER_BOTH | FILTER_ENCORE)) {
+        if (DBTower_isEncoreMode) {
             self->timer = 60;
             self->state = DBTower_State_Setup_Encore;
         }
@@ -392,7 +400,7 @@ void DBTower_State_Finish(void)
         Music_TransitionTrack(TRACK_STAGE, 0.0125);
 
 #if MANIA_USE_PLUS
-        if (SceneInfo->filter == (FILTER_BOTH | FILTER_ENCORE)) {
+        if (DBTower_isEncoreMode) {
             self->timer = 0;
             self->state = DBTower_State_SpawnSignPost;
         }
