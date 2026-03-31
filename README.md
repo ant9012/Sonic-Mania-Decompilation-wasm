@@ -125,6 +125,8 @@ emcmake cmake -B build
 cmake --build build --config release
 ```
 
+# Follow the instructions below after building for Web:
+
 ### Getting this to work on custom interfaces
 To get this web port to work, you need to change your CORS policy on how you serve the port itself, that being your own interface. This is required as libtheora/theoraplay requires multiple threads to work, this is an issue as modern browsers **WILL BLOCK MULTI-THREADING BY DEFAULT.** If you dont the port will not launch, so don't open an issue saying that the port wont open, as most likely you forgot to set the required http response headers: 
 ```http
@@ -155,7 +157,7 @@ Instead of grabbing the RSDKv5/Shaders from the [official repo](https://github.c
 Extract your Data.rsdk from [RetroED](https://github.com/RSDKModding/RetroED), using the RSDK Unpacker, select your Sonic Mania Data.rsdk by clicking on Select DataPack, then it will give you a list of .txt files. Make sure to click on the RSDKv5FileList one. Now click on Export DataPack and set the directory where you want the Data folder to be, and now there will be a Data Folder and add the Shaders(RSDKv5/Shaders) folder in there in the root of the Data folder.
 
 
-### Other Platforms
+# Other Platforms
 The only directly supported platforms are those listed above. Since Mania is very easy to build, requiring no additional dependencies, virtually any platform that can run RSDKv5 can compile Mania easily.
 
 However, there are a multitude of ports listed in the **[RSDKv5 repository.](https://github.com/RSDKModding/RSDKv5-Decompilation)**
