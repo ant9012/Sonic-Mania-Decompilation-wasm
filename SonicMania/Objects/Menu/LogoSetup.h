@@ -18,6 +18,7 @@ struct EntityLogoSetup {
     StateMachine(stateDraw);
     int32 timer;
     Animator fontAnimator;
+    String webPortText;
 };
 
 // Object Struct
