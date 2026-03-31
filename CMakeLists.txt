@@ -49,10 +49,14 @@ else()
     )
 endif()
 
-if(GAME_STATIC)
-    add_library(${GAME_NAME} STATIC ${GAME_SOURCES})
+if(EMSCRIPTEN)
+    include(RSDK-Library-GameAPI.cmake)
 else()
-    add_library(${GAME_NAME} SHARED ${GAME_SOURCES})
+    if(GAME_STATIC)
+        add_library(${GAME_NAME} STATIC ${GAME_SOURCES})
+    else()
+        add_library(${GAME_NAME} SHARED ${GAME_SOURCES})
+    endif()
 endif()
 
 target_include_directories(${GAME_NAME} PRIVATE
