@@ -8,7 +8,7 @@ struct ObjectLogoSetup {
     RSDK_OBJECT
     int32 timer;
     uint16 sfxSega;
-    uint16 fontFrames; // ADD THIS
+    uint16 fontFrames;
 };
 
 // Entity Class
@@ -17,7 +17,7 @@ struct EntityLogoSetup {
     StateMachine(state);
     StateMachine(stateDraw);
     int32 timer;
-    Animator fontAnimator; // ADD THIS
+    Animator fontAnimator;
 };
 
 // Object Struct
@@ -44,7 +44,8 @@ void LogoSetup_State_FadeToNextLogos(void);
 void LogoSetup_State_NextLogos(void);
 void LogoSetup_Draw_Fade(void);
 
-// ADD THESE
+// Web Port
+int32 LogoSetup_GetFontFrame(char c);
 void LogoSetup_State_WebPortFadeIn(void);
 void LogoSetup_State_WebPortShow(void);
 void LogoSetup_State_WebPortFadeOut(void);
