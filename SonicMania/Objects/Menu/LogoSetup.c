@@ -48,6 +48,7 @@ void LogoSetup_StageLoad(void)
     LogoSetup->sfxSega = RSDK.GetSfx("Stage/Sega.wav");
     RSDK.ResetEntitySlot(0, LogoSetup->classID, NULL);
     UIPicture->aniFrames = RSDK.LoadSpriteAnimation("Logos/Logos.bin", SCOPE_STAGE);
+    LogoSetup->fontFrames = RSDK.LoadSpriteAnimation("UI/SmallFont.bin", SCOPE_STAGE);
 
     // What... is this for...?
     // LogoSetup is never in any other stages besides category 0, scene 0 (Logos) so this should never be used...
@@ -127,8 +128,11 @@ void LogoSetup_State_NextLogos(void)
 
     if (self->timer >= 1024) {
         if (ScreenInfo->position.y >= SCREEN_YSIZE) {
-            ++SceneInfo->listPos;
-            RSDK.LoadScene();
+            // CHANGED: go to WebPort screen instead of loading next scene
+            self->timer = 1024;
+            RSDK.SetSpriteAnimation(LogoSetup->fontFrames, 0, &self->fontAnimator, true, 0);
+            self->state     = LogoSetup_State_WebPortFadeIn;
+            self->stateDraw = LogoSetup_Draw_WebPort;
         }
         else {
             ScreenInfo->position.y += SCREEN_YSIZE;
@@ -140,6 +144,68 @@ void LogoSetup_State_NextLogos(void)
     else {
         self->timer += 16;
     }
+}
+
+void LogoSetup_State_WebPortFadeIn(void)
+{
+    RSDK_THIS(LogoSetup);
+
+    if (self->timer <= 0) {
+        self->timer = 0;
+        self->state = LogoSetup_State_WebPortShow;
+    }
+    else {
+        self->timer -= 16;
+    }
+}
+
+void LogoSetup_State_WebPortShow(void)
+{
+    RSDK_THIS(LogoSetup);
+
+    ++self->timer;
+
+    if (self->timer > 120 || (self->timer > 30 && ControllerInfo->keyStart.press)) {
+        self->timer = 0;
+        self->state = LogoSetup_State_WebPortFadeOut;
+    }
+}
+
+void LogoSetup_State_WebPortFadeOut(void)
+{
+    RSDK_THIS(LogoSetup);
+
+    if (self->timer >= 1024) {
+        ++SceneInfo->listPos;
+        RSDK.LoadScene();
+    }
+    else {
+        self->timer += 16;
+    }
+}
+
+void LogoSetup_Draw_WebPort(void)
+{
+    RSDK_THIS(LogoSetup);
+
+    // Draw text centered on screen
+    const char *text = "Web Port by Anto";
+    int32 len        = 16;
+    int32 spacing    = 8 << 16; // 8 pixels per character (adjust if needed)
+
+    Vector2 drawPos;
+    drawPos.x = (ScreenInfo->center.x << 16) - ((len * spacing) >> 1) + (spacing >> 1);
+    drawPos.y = ScreenInfo->center.y << 16;
+
+    for (int32 i = 0; i < len; i++) {
+        self->fontAnimator.frameID = text[i];
+        RSDK.DrawSprite(&self->fontAnimator, &drawPos, true);
+        drawPos.x += spacing;
+    }
+
+    // Fade overlay (only during fade in/out, not during hold)
+    if (self->state != LogoSetup_State_WebPortShow)
+        RSDK.FillScreen(0x000000, self->timer, self->timer - 128, self->timer - 256);
 }
 
 void LogoSetup_Draw_Fade(void)
