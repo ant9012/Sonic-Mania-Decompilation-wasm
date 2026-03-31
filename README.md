@@ -123,7 +123,7 @@ emcmake cmake -B build
 cmake --build build --config release
 ```
 
-# Getting this to work on custom interfaces
+### Getting this to work on custom interfaces
 To get this web port to work, you need to change your CORS policy on how you serve the port itself, that being your own interface. This is required as libtheora/theoraplay requires multiple threads to work, this is an issue as modern browsers **WILL BLOCK MULTI-THREADING BY DEFAULT.** If you dont the port will not launch, so don't open an issue saying that the port wont open, as most likely you forgot to set the required http response headers: 
 ```http
 Cross-Origin-Opener-Policy: same-origin
@@ -132,7 +132,7 @@ Cross-Origin-Embedder-Policy: require-corp
 You might be asking, "HOW TF AM I SUPPOSED TO DO THIS???????"
 If so here are some simple solutions:
 
-## Setting these in whatever interface you're using to launch the port
+#### Setting these in whatever interface you're using to launch the port
 Since you're using a custom interface, it is still **STUPID** easy to setup.
 
 All *you* need to do is to get this: https://raw.githubusercontent.com/gzuidhof/coi-serviceworker/refs/heads/master/coi-serviceworker.js (right-click the link and click on Save As... ), and drop it in the root directory where you are launching the port, and set this where your ```<head>``` of the .html file you're using to launch the port itself (aka where you're launching the RSDKv3.js/.wasm files):
@@ -146,7 +146,7 @@ All *you* need to do is to get this: https://raw.githubusercontent.com/gzuidhof/
 and after that, you're good to go!
 
 
-# Getting Shaders to work on web
+### Getting Shaders to work on web
 
 For shaders to work on web follow the instructions here: https://rsdkmodding.com/Guides/RSDKv5/Decompilation/ShadersSetup/
 
