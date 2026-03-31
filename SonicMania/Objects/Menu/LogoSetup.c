@@ -184,26 +184,42 @@ void LogoSetup_State_WebPortFadeOut(void)
     }
 }
 
+int32 LogoSetup_GetFontFrame(char c)
+{
+    if (c >= 'A' && c <= 'Z')
+        return c - 'A';
+    if (c >= 'a' && c <= 'z')
+        return c - 'a';
+    if (c == ' ')
+        return 26;
+    return 0;
+}
+
 void LogoSetup_Draw_WebPort(void)
 {
     RSDK_THIS(LogoSetup);
 
-    // Draw text centered on screen
+    // Black background to hide the logos underneath
+    RSDK.FillScreen(0x000000, 0xFF, 0xFF, 0xFF);
+
     const char *text = "Web Port by Anto";
     int32 len        = 16;
-    int32 spacing    = 8 << 16; // 8 pixels per character (adjust if needed)
+    int32 spacing    = 8 << 16;
 
     Vector2 drawPos;
     drawPos.x = (ScreenInfo->center.x << 16) - ((len * spacing) >> 1) + (spacing >> 1);
     drawPos.y = ScreenInfo->center.y << 16;
 
-    for (int32 i = 0; i < len; i++) {
-        self->fontAnimator.frameID = text[i];
-        RSDK.DrawSprite(&self->fontAnimator, &drawPos, true);
-        drawPos.x += spacing;
+    // Only draw text when not fully faded
+    if (self->state == LogoSetup_State_WebPortShow || self->timer < 1024) {
+        for (int32 i = 0; i < len; i++) {
+            self->fontAnimator.frameID = LogoSetup_GetFontFrame(text[i]);
+            RSDK.DrawSprite(&self->fontAnimator, &drawPos, true);
+            drawPos.x += spacing;
+        }
     }
 
-    // Fade overlay (only during fade in/out, not during hold)
+    // Fade overlay during transitions
     if (self->state != LogoSetup_State_WebPortShow)
         RSDK.FillScreen(0x000000, self->timer, self->timer - 128, self->timer - 256);
 }
