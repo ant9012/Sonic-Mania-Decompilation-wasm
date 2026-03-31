@@ -44,6 +44,8 @@ This repo includes everything you need for Sonic Mania + RSDKv5(U). If you wish 
 ### Emscripten
 Install the dependencies for your native platform, and then install [Emscripten](https://emscripten.org/docs/getting_started/downloads.html).
 
+Also be sure to download libtheora [here](https://xiph.org/downloads), and unzip it in RSDKv5(dependencies/RSDKv5), as dependencies/all/libtheora
+
 ### Windows
 To handle dependencies, you'll need to install [Visual Studio Community](https://visualstudio.microsoft.com/downloads/) (make sure to install the `Desktop development with C++` package during the installation) and [vcpkg](https://learn.microsoft.com/en-us/vcpkg/get_started/get-started?pivots=shell-cmd#1---set-up-vcpkg) (You only need to follow `1 - Set up vcpkg`).
 
@@ -148,16 +150,9 @@ and after that, you're good to go!
 
 ### Getting Shaders to work on web
 
-For shaders to work on web follow the instructions here: https://rsdkmodding.com/Guides/RSDKv5/Decompilation/ShadersSetup/
+Instead of grabbing the RSDKv5/Shaders from the [official repo](https://github.com/RSDKModding/RSDKv5-Decompilation) grab them from [here](https://github.com/ant9012/RSDKv5-Decompilation-wasm), as there are some changes I needed to make in order for the shaders to look properly.
 
-#### HOWEVER
-
-Instead of grabbing the RSDKv5/Shaders from the [official repo](https://github.com/RSDKModding/RSDKv5-Decompilation) grab them from here, as there are some changes I needed to make in order for the shaders to look properly.
-
-You can also extract your Data.rsdk from [RetroED](https://github.com/RSDKModding/RetroED), using the RSDK Unpacker, select your Data.rsdk by clicking on Select DataPack, then it will give you a list of .txt files. Make sure to click on the RSDKv5 one. Now click on Export DataPack and set the directory where you want the Data folder to be, and now there will be a Data Folder and add the Shaders folder in there in the root of the Data foler.
-
-### How to do such a feat
-Extract your Data.rsdk using [RetroED](https://github.com/RSDKModding/RetroED) and just plop the RSDKv5/Shaders folder in there.
+Extract your Data.rsdk from [RetroED](https://github.com/RSDKModding/RetroED), using the RSDK Unpacker, select your Sonic Mania Data.rsdk by clicking on Select DataPack, then it will give you a list of .txt files. Make sure to click on the RSDKv5FileList one. Now click on Export DataPack and set the directory where you want the Data folder to be, and now there will be a Data Folder and add the Shaders(RSDKv5/Shaders) folder in there in the root of the Data folder.
 
 
 ### Other Platforms
