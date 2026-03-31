@@ -108,10 +108,9 @@ The following cmake arguments are available when compiling:
 
 ## Compiling for Web
 
-> [!NOTE]  
-> This fork does *not* run standalone! If you want to host this, you will need to build the [RSDK-Library Engine Manager](https://github.com/Jdsle/RSDK), or develop your own interface.
-
-> Also you will need to replace RSDKv5U.js/wasm in the public/modules folder if you're using the [RSDK-Library Engine Manager](https://github.com/Jdsle/RSDK), if you want prebuilt versions go here: https://github.com/ant9012/rsdk-library-fork/tree/main/public/modules and for playable prebuilts if you simply want to play this web port, go here: https://ant9012.github.io/rsdk-library-fork
+> [!NOTE]
+> This **WILL NOT** work standalone, if you want to this Sonic Mania web port yourself, you need to compile [this](https://github.com/ant9012/RSDKv5-Decompilation-wasm) as well, and make the Game.wasm compiled from this repo visible to its filesystem.
+> If you simply wish to play this go to [rsdk-library](https://rsdk-library.github.io) or to my [fork](https://ant9012.github.io/rsdk-library-fork) for shader support.
 
 You can just follow the above, but instead of typing 
 ```
@@ -125,7 +124,7 @@ emcmake cmake -B build
 cmake --build build --config release
 ```
 
-# Follow the instructions below after building for Web:
+# Follow the instructions below after building for Web, if you're hosting this yourself:
 
 ### Getting this to work on custom interfaces
 To get this web port to work, you need to change your CORS policy on how you serve the port itself, that being your own interface. This is required as libtheora/theoraplay requires multiple threads to work, this is an issue as modern browsers **WILL BLOCK MULTI-THREADING BY DEFAULT.** If you dont the port will not launch, so don't open an issue saying that the port wont open, as most likely you forgot to set the required http response headers: 
