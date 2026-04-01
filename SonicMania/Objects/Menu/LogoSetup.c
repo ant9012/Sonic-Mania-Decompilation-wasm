@@ -128,9 +128,15 @@ void LogoSetup_State_NextLogos(void)
 
     if (self->timer >= 1024) {
         if (ScreenInfo->position.y >= SCREEN_YSIZE) {
-            // CHANGED: go to WebPort screen instead of loading next scene
             self->timer = 1024;
+            
+            // Set up the font animator
             RSDK.SetSpriteAnimation(LogoSetup->fontFrames, 0, &self->fontAnimator, true, 0);
+            
+            // Initialize and set up the string
+            RSDK.InitString(&self->webPortText, "Web Port by Anto", 0);
+            RSDK.SetSpriteString(LogoSetup->fontFrames, 0, &self->webPortText);
+            
             self->state     = LogoSetup_State_WebPortFadeIn;
             self->stateDraw = LogoSetup_Draw_WebPort;
         }
@@ -199,25 +205,18 @@ void LogoSetup_Draw_WebPort(void)
 {
     RSDK_THIS(LogoSetup);
 
-    // Black background to hide the logos underneath
+    // Black background
     RSDK.FillScreen(0x000000, 0xFF, 0xFF, 0xFF);
 
-    const char *text = "Web Port by Anto";
-    int32 len        = 16;
-    int32 spacing    = 8 << 16;
-
+    // Center the text
+    int32 width = RSDK.GetStringWidth(LogoSetup->fontFrames, 0, &self->webPortText, 0, self->webPortText.length, 0);
+    
     Vector2 drawPos;
-    drawPos.x = (ScreenInfo->center.x << 16) - ((len * spacing) >> 1) + (spacing >> 1);
+    drawPos.x = (ScreenInfo->center.x << 16) - (width << 15);
     drawPos.y = ScreenInfo->center.y << 16;
 
-    // Only draw text when not fully faded
-    if (self->state == LogoSetup_State_WebPortShow || self->timer < 1024) {
-        for (int32 i = 0; i < len; i++) {
-            self->fontAnimator.frameID = LogoSetup_GetFontFrame(text[i]);
-            RSDK.DrawSprite(&self->fontAnimator, &drawPos, true);
-            drawPos.x += spacing;
-        }
-    }
+    // Draw the text
+    RSDK.DrawText(&self->fontAnimator, &drawPos, &self->webPortText, 0, self->webPortText.length, ALIGN_LEFT, 0, NULL, NULL, true);
 
     // Fade overlay during transitions
     if (self->state != LogoSetup_State_WebPortShow)
