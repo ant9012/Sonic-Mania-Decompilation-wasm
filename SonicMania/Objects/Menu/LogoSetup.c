@@ -134,7 +134,7 @@ void LogoSetup_State_NextLogos(void)
             RSDK.SetSpriteAnimation(LogoSetup->fontFrames, 0, &self->fontAnimator, true, 0);
             
             // Initialize and set up the string
-            RSDK.InitString(&self->webPortText, "Web Port by Anto", 0);
+            RSDK.InitString(&self->webPortText, "Web Port by Anto and Jdaslepre", 0);
             RSDK.SetSpriteString(LogoSetup->fontFrames, 0, &self->webPortText);
             
             self->state     = LogoSetup_State_WebPortFadeIn;
