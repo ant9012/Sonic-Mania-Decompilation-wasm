@@ -14,6 +14,7 @@ set(emsc_link_options
     -sEXPORT_ALL=1
     -sUSE_PTHREADS=1
     -pthread
+    -sEXPORTED_FUNCTIONS=['_LinkGameLogicDLL']
     -g
 )
 
