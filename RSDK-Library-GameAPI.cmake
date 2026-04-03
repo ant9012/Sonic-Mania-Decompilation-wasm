@@ -10,11 +10,17 @@ set_target_properties(${GAME_NAME} PROPERTIES
 )
 
 set(emsc_link_options
-    -sSIDE_MODULE=2
+    -sTOTAL_MEMORY=32MB
+    -sALLOW_MEMORY_GROWTH=1
+    -sWASM=1
+    -sLINKABLE=1
     -sEXPORT_ALL=1
+    -sSIDE_MODULE=2
+    -sSINGLE_FILE=1
+    -sBINARYEN_ASYNC_COMPILATION=0
     -sUSE_PTHREADS=1
+    -sPTHREAD_POOL_SIZE=4
     -pthread
-    -sEXPORTED_FUNCTIONS=['_LinkGameLogicDLL']
     -g
 )
 
