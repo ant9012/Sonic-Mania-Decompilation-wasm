@@ -10,32 +10,22 @@ set_target_properties(${GAME_NAME} PROPERTIES
 )
 
 set(emsc_link_options
-    # Side module configuration - KEEP IT SIMPLE
     -sSIDE_MODULE=2
-    -sEXPORT_ALL=1
-    
-    # Memory - side modules don't control this, main module does
-    # Remove TOTAL_MEMORY, ALLOW_MEMORY_GROWTH
-    
-    # NO single file - side modules must be separate .wasm
-    # -sSINGLE_FILE=1  # REMOVE THIS
-    
-    # NO pthreads in side module - main module handles threading
-    # -sUSE_PTHREADS=1  # REMOVE THIS
-    # -sPTHREAD_POOL_SIZE=4  # REMOVE THIS
-    # -pthread  # REMOVE THIS
-    
-    # NO async compilation for side modules
-    -sBINARYEN_ASYNC_COMPILATION=0
-    
-    # Keep WASM
     -sWASM=1
     
-    # Debug symbols (optional, remove for production)
-    -g
+    -sUSE_PTHREADS=1
+    -sIMPORTED_MEMORY=1
+    -sSHARED_MEMORY=1
     
-    # Link-time optimization (optional)
-    -flto
+    -sEXPORT_ALL=1
+    -Wl,--export-all
+    -Wl,--no-gc-sections
+    
+    -sERROR_ON_UNDEFINED_SYMBOLS=0
+)
+
+target_compile_options(${GAME_NAME} PRIVATE
+    -pthread
 )
 
 target_link_options(${GAME_NAME} PRIVATE ${emsc_link_options})
