@@ -12,20 +12,19 @@ set_target_properties(${GAME_NAME} PROPERTIES
 set(emsc_link_options
     -sSIDE_MODULE=2
     -sWASM=1
-    
+
     -sUSE_PTHREADS=1
     -sIMPORTED_MEMORY=1
     -sSHARED_MEMORY=1
-    
+    -pthread
+
     -sEXPORT_ALL=1
     -Wl,--export-all
     -Wl,--no-gc-sections
-    
-    -sERROR_ON_UNDEFINED_SYMBOLS=0
-)
 
-target_compile_options(${GAME_NAME} PRIVATE
-    -pthread
+    -sERROR_ON_UNDEFINED_SYMBOLS=0
+
+    -g
 )
 
 target_link_options(${GAME_NAME} PRIVATE ${emsc_link_options})
