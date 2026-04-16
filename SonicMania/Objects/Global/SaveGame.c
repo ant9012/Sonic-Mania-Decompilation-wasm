@@ -348,14 +348,30 @@ void SaveGame_SavePlayerState(void)
     SaveRAM *saveRAM     = SaveGame_GetSaveRAM();
     EntityPlayer *player = RSDK_GET_ENTITY(SLOT_PLAYER1, Player);
 
-    globals->restartSlot[0] = 0;
-    globals->restartSlot[1] = 0;
-    globals->restartSlot[2] = 0;
-    globals->restartSlot[3] = 0;
+    // Fix: preserve the last activated star post across scene reloads.
+    // Previously these were unconditionally zeroed, causing the player to
+    // respawn at the level start instead of the last star post touched.
+    if (StarPost) {
+        for (int32 p = 0; p < PLAYER_COUNT; ++p) {
+            globals->restartPos[(p * 2) + 0] = StarPost->playerPositions[p].x;
+            globals->restartPos[(p * 2) + 1] = StarPost->playerPositions[p].y;
+            globals->restartDir[p]           = StarPost->playerDirections[p];
+            globals->restartSlot[p]          = StarPost->postIDs[p];
+        }
+        globals->restartMilliseconds = StarPost->storedMS;
+        globals->restartSeconds      = StarPost->storedSeconds;
+        globals->restartMinutes      = StarPost->storedMinutes;
+    }
+    else {
+        globals->restartSlot[0] = 0;
+        globals->restartSlot[1] = 0;
+        globals->restartSlot[2] = 0;
+        globals->restartSlot[3] = 0;
 
-    globals->restartMilliseconds = SceneInfo->milliseconds;
-    globals->restartSeconds      = SceneInfo->seconds;
-    globals->restartMinutes      = SceneInfo->minutes;
+        globals->restartMilliseconds = SceneInfo->milliseconds;
+        globals->restartSeconds      = SceneInfo->seconds;
+        globals->restartMinutes      = SceneInfo->minutes;
+    }
 
 #if MANIA_USE_PLUS
     if (saveRAM && TitleCard->suppressCB != Zone_TitleCard_SupressCB) {
