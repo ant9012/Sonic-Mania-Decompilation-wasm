@@ -3,7 +3,7 @@ name: Build Mania
 on:
   push:
     branches:
-      - master
+      - main
 
 env:
   GENERAL_FLAGS: "-DCMAKE_BUILD_TYPE=Release"
