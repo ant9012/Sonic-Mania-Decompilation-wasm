@@ -6,7 +6,7 @@ on:
       - master
 
 env:
-  GENERAL_FLAGS: "-DWITH_RSDK=OFF -DCMAKE_BUILD_TYPE=Release"
+  GENERAL_FLAGS: "-DCMAKE_BUILD_TYPE=Release"
   V5_FLAGS: "-DRETRO_REVISION=2"
   V5U_FLAGS: "-DRETRO_REVISION=3"
   # Normally you would use $VCPKG_INSTALLATION_PATH, but it's broken...so hardcode C:/vcpkg
@@ -77,6 +77,34 @@ jobs:
           cmake -B build_v5 ${{env.GENERAL_FLAGS}} ${{env.V5_FLAGS}}
           cmake --build build_v5 --parallel
           cmake -B build_v5U ${{env.GENERAL_FLAGS}} ${{env.V5U_FLAGS}}
+          cmake --build build_v5U --parallel
+      - name: Move artifacts
+        run: |
+          mkdir artifacts
+          mkdir artifacts/v5
+          mkdir artifacts/v5U
+          mv ./build_v5/lib*.so ./artifacts/v5/
+          mv ./build_v5U/lib*.so ./artifacts/v5U/
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: mania-linux
+          path: artifacts
+  mania-wasm:
+   runs-on: ubuntu-latest
+   steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive
+      - name: Download Emscripten
+        uses: lovasoa/setup-emscripten@v1
+        
+      - name: Build Mania
+        run: |
+          emcmake cmake -B build_v5 ${{env.GENERAL_FLAGS}} ${{env.V5_FLAGS}}
+          cmake --build build_v5 --parallel
+          emcmake cmake -B build_v5U ${{env.GENERAL_FLAGS}} ${{env.V5U_FLAGS}}
           cmake --build build_v5U --parallel
       - name: Move artifacts
         run: |
