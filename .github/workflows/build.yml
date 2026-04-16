@@ -111,8 +111,8 @@ jobs:
           mkdir artifacts
           mkdir artifacts/v5
           mkdir artifacts/v5U
-          mv ./build_v5/lib*.so ./artifacts/v5/
-          mv ./build_v5U/lib*.so ./artifacts/v5U/
+          mv ./build_v5/Game.wasm ./artifacts/v5/
+          mv ./build_v5U/Game.wasm ./artifacts/v5U/
       - name: Upload artifacts
         uses: actions/upload-artifact@v4
         with:
