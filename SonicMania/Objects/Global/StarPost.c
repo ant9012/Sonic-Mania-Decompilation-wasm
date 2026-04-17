@@ -255,11 +255,16 @@ void StarPost_CheckCollisions(void)
                 StarPost->playerPositions[playerID].x = self->position.x;
                 StarPost->playerPositions[playerID].y = self->position.y;
                 StarPost->playerDirections[playerID]  = self->direction;
+                globals->restartPos[(playerID * 2) + 0] = StarPost->playerPositions[playerID].x;
+                globals->restartPos[(playerID * 2) + 1] = StarPost->playerPositions[playerID].y;
+                globals->restartDir[playerID]           = StarPost->playerDirections[playerID];
+                globals->restartSlot[playerID]          = StarPost->postIDs[playerID];
                 if (globals->gameMode < MODE_TIMEATTACK) {
-                    StarPost->storedMS      = SceneInfo->milliseconds;
-                    StarPost->storedSeconds = SceneInfo->seconds;
-                    StarPost->storedMinutes = SceneInfo->minutes;
-                }
+                    globals->restartMilliseconds = StarPost->storedMS;
+                    globals->restartSeconds      = StarPost->storedSeconds;
+                    globals->restartMinutes      = StarPost->storedMinutes;
+}
+
 
                 int32 playerVelocity = player->onGround ? player->groundVel : player->velocity.x;
                 int32 ballSpeed      = -12 * (playerVelocity >> 17);
