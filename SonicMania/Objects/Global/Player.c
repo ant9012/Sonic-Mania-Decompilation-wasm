@@ -2085,6 +2085,10 @@ void Player_HandleDeath(EntityPlayer *player)
 #endif
                             SaveGame_SaveFile(StateMachine_None);
                         }
+                        globals->recallEntities  = true;
+                        globals->restartRings    = 0;
+                        globals->restart1UP      = player->ringExtraLife;
+                        globals->restartPowerups = 0;
 
                         Music_FadeOut(0.025);
                         Zone_StartFadeOut_MusicFade(10, 0x000000);
