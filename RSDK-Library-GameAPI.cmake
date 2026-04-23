@@ -1,6 +1,6 @@
 set(WITH_RSDK OFF)
-set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fPIC -O0 -g")
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fPIC -O0 -g")
+set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fPIC -O3")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fPIC -O3")
 
 add_executable(${GAME_NAME} ${GAME_SOURCES})
 
@@ -13,16 +13,14 @@ set(emsc_link_options
     -sSIDE_MODULE=2
     -sWASM=1
 
+    -sUSE_PTHREADS=1
     -sIMPORTED_MEMORY=1
-
-    -sASSERTIONS=2
-    -sSAFE_HEAP=1
+    -sSHARED_MEMORY=1
+    -pthread
 
     -sEXPORT_ALL=1
     -Wl,--export-all
     -Wl,--no-gc-sections
-
-    "-sEXPORTED_FUNCTIONS=['_LinkGameLogicDLL','_RSDKRevision']"
 
     -sERROR_ON_UNDEFINED_SYMBOLS=0
 
