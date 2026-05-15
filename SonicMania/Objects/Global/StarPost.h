@@ -18,6 +18,10 @@ struct ObjectStarPost {
     uint16 aniFrames;
     uint16 sfxStarPost;
     uint16 sfxWarp;
+    // Tracking for star post hits and initial spawn positions
+    bool32 hasHitStarPost[PLAYER_COUNT];
+    Vector2 initialPlayerPositions[PLAYER_COUNT];
+    uint8 initialPlayerDirections[PLAYER_COUNT];
 };
 
 // Entity Class
