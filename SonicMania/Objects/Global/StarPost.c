@@ -86,6 +86,11 @@ void StarPost_StageLoad(void)
 
     StarPost->interactablePlayers = (1 << Player->playerCount) - 1;
 
+    // Initialize tracking flags
+    for (int32 p = 0; p < Player->playerCount; ++p) {
+        StarPost->hasHitStarPost[p] = false;
+    }
+
     DEBUGMODE_ADD_OBJ(StarPost);
 
     for (int32 p = 0; p < Player->playerCount; ++p) {
@@ -139,6 +144,15 @@ void StarPost_StageLoad(void)
                 }
             }
             savedStarPost->interactedPlayers = StarPost->interactablePlayers;
+            // Mark that this player has hit a star post
+            StarPost->hasHitStarPost[p] = true;
+        }
+        else {
+            // Store the initial player position (used when no star post is hit)
+            EntityPlayer *player = RSDK_GET_ENTITY(p, Player);
+            StarPost->initialPlayerPositions[p].x = player->position.x;
+            StarPost->initialPlayerPositions[p].y = player->position.y;
+            StarPost->initialPlayerDirections[p]  = player->direction;
         }
 
 #if MANIA_USE_PLUS
@@ -170,7 +184,10 @@ void StarPost_DebugSpawn(void)
 }
 void StarPost_ResetStarPosts(void)
 {
-    for (int32 i = 0; i < Player->playerCount; ++i) StarPost->postIDs[i] = 0;
+    for (int32 i = 0; i < Player->playerCount; ++i) {
+        StarPost->postIDs[i] = 0;
+        StarPost->hasHitStarPost[i] = false;
+    }
     StarPost->storedMS      = 0;
     StarPost->storedSeconds = 0;
     StarPost->storedMinutes = 0;
@@ -255,6 +272,8 @@ void StarPost_CheckCollisions(void)
                 StarPost->playerPositions[playerID].x = self->position.x;
                 StarPost->playerPositions[playerID].y = self->position.y;
                 StarPost->playerDirections[playerID]  = self->direction;
+                // Mark that this player has hit a star post
+                StarPost->hasHitStarPost[playerID] = true;
                 globals->restartPos[(playerID * 2) + 0] = StarPost->playerPositions[playerID].x;
                 globals->restartPos[(playerID * 2) + 1] = StarPost->playerPositions[playerID].y;
                 globals->restartDir[playerID]           = StarPost->playerDirections[playerID];
