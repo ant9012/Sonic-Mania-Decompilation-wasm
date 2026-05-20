@@ -23,6 +23,7 @@ void TitleCard_StaticUpdate(void) {}
 void TitleCard_Draw(void)
 {
     RSDK_THIS(TitleCard);
+    RSDK.PrintLog(PRINT_NORMAL, "TitleCard Draw State: %p", self->stateDraw);
 
     StateMachine_Run(self->stateDraw);
 }
@@ -519,8 +520,12 @@ void TitleCard_State_ShowingTitle(void)
 void TitleCard_State_SlideAway(void)
 {
     RSDK_THIS(TitleCard);
+    
 
     Zone_ApplyWorldBounds();
+
+    RSDK.PrintLog(PRINT_NORMAL, "SlideAway timer: %d, Green.x: %d", 
+                   self->actionTimer, self->stripVertsGreen[0].x);
 
     int32 speed = ++self->actionTimer << 18;
     self->stripVertsGreen[0].x -= speed;
