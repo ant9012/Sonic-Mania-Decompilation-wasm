@@ -32,6 +32,8 @@ void TitleCard_Create(void *data)
 {
     RSDK_THIS(TitleCard);
 
+    RSDK.PrintLog(PRINT_NORMAL, "suppressTitlecard = %d, enableIntro = %d", globals->suppressTitlecard, globals->enableIntro);
+
     if (!SceneInfo->inEditor) {
         self->active    = ACTIVE_ALWAYS;
         self->visible   = true;
