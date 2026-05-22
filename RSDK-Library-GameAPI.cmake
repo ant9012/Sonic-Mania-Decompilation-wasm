@@ -22,7 +22,7 @@ set(emsc_link_options
     -Wl,--export-all
     -Wl,--no-gc-sections
 
-    -sERROR_ON_UNDEFINED_SYMBOLS=0
+    -sERROR_ON_UNDEFINED_SYMBOLS=1
 
     -g
 )
