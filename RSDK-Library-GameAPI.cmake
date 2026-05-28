@@ -1,6 +1,6 @@
 set(WITH_RSDK OFF)
-set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fPIC -O3")
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fPIC -O3")
+set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fPIC -O1")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fPIC -O1")
 
 add_executable(${GAME_NAME} ${GAME_SOURCES})
 
@@ -12,8 +12,6 @@ set_target_properties(${GAME_NAME} PROPERTIES
 set(emsc_link_options
     -sSIDE_MODULE=2
     -sWASM=1
-    
-    -sSHARED_MEMORY=1
 
     -sEXPORT_ALL=1
     -Wl,--export-all
