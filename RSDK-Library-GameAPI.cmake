@@ -14,8 +14,6 @@ set(emsc_link_options
     -sWASM=1
 
     -sUSE_PTHREADS=0
-    -sIMPORTED_MEMORY=1
-    -sSHARED_MEMORY=1
 
     -sEXPORT_ALL=1
     -Wl,--export-all
