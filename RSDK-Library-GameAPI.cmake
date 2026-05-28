@@ -20,7 +20,6 @@ set(emsc_link_options
     -Wl,--no-gc-sections
 
     -sERROR_ON_UNDEFINED_SYMBOLS=1
-    -sASSERTIONS=2
 
     -g
 )
